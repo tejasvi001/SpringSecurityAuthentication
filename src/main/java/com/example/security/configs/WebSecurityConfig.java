@@ -1,6 +1,7 @@
 package com.example.security.configs;
 
 import com.example.security.filters.JwtAuthFilter;
+import com.example.security.handlers.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -14,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -25,9 +28,10 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig implements WebMvcConfigurer {
     private final JwtAuthFilter jwtAuthFilter;
-
-    public WebSecurityConfig(JwtAuthFilter jwtAuthFilter) {
+    private final OAuth2SuccessHandler auth2SuccessHandler;
+    public WebSecurityConfig(JwtAuthFilter jwtAuthFilter, OAuth2SuccessHandler auth2SuccessHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.auth2SuccessHandler = auth2SuccessHandler;
     }
 
     @Bean
@@ -36,7 +40,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                .authorizeHttpRequests(
                        auth->
                                auth
-                                       .requestMatchers("/auth/**","/error","/posts").permitAll()
+                                       .requestMatchers("/auth/**","/error","/home.html").permitAll()
                                        .anyRequest().authenticated()
                )
                .formLogin(Customizer.withDefaults())
@@ -44,8 +48,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                .sessionManagement(sessionConifg->sessionConifg.sessionCreationPolicy(
                        SessionCreationPolicy.STATELESS
                ))
-               .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+               .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+               .oauth2Login(oauth2Config->oauth2Config
+                       .failureUrl("/login?error=true")
+                       .successHandler(auth2SuccessHandler)
+               );
 
         return httpSecurity.build();
     }
@@ -53,6 +60,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(new MappingJackson2HttpMessageConverter());
     }
+
 
 //    @Bean
 //    UserDetailsService myInMemoryUserDetailsService(){

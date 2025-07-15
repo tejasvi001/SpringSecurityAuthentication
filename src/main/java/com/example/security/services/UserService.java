@@ -32,15 +32,17 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder=passwordEncoder;
 
     }
-
+    public User getUserByEmail(String email){
+        return userRepository.findByEmail(email).orElse(null);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             return userRepository.findByEmail(username).orElseThrow(
-                    ()->new ResourceNotFoundException("no user with the email "+username+" exists")
+                    ()->new BadCredentialsException("no user with the email "+username+" exists")
             );
-        } catch (ResourceNotFoundException e) {
+        } catch (BadCredentialsException e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,5 +62,9 @@ public class UserService implements UserDetailsService {
         return  userRepository.findById(userId).orElseThrow(
                 ()->new ResourceNotFoundException("no user with the id  "+userId+" exists")
         );
+    }
+
+    public User save(User newUser) {
+        return userRepository.save(newUser);
     }
 }

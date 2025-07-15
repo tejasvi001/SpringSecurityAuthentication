@@ -1,13 +1,16 @@
 package com.example.security.entities;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-
+@ToString
+@Builder
 @Entity
 @Table
 public class User implements UserDetails {

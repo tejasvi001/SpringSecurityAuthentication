@@ -8,18 +8,20 @@ import com.example.security.repositories.PostRepository;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-@Slf4j
+
 @ToString
 @Service
 public class PostServiceImpl implements PostService{
     private final ModelMapper modelMapper;
     private final PostRepository postRepository;
-
+    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
@@ -44,7 +46,7 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDTO findById(Long id)  {
         User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("User",user);
+        log.info("User: {}", user);
         PostEntity post= null;
         try {
             post = postRepository.findById(id).orElseThrow(
