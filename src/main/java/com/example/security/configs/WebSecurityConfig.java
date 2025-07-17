@@ -1,9 +1,11 @@
 package com.example.security.configs;
 
+import com.example.security.entities.enums.Role;
 import com.example.security.filters.JwtAuthFilter;
 import com.example.security.handlers.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.config.Customizer;
@@ -24,11 +26,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+import static com.example.security.entities.enums.Role.ADMIN;
+import static com.example.security.entities.enums.Role.CREATOR;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig implements WebMvcConfigurer {
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2SuccessHandler auth2SuccessHandler;
+    private final String[] publicRoutes={
+            "/auth/**",
+            "/error",
+            "/home.html"
+    };
     public WebSecurityConfig(JwtAuthFilter jwtAuthFilter, OAuth2SuccessHandler auth2SuccessHandler) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.auth2SuccessHandler = auth2SuccessHandler;
@@ -40,7 +50,9 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                .authorizeHttpRequests(
                        auth->
                                auth
-                                       .requestMatchers("/auth/**","/error","/home.html").permitAll()
+                                       .requestMatchers(publicRoutes).permitAll()
+                                       .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
+                                       .requestMatchers(HttpMethod.PUT,"/posts/**").hasAnyRole(ADMIN.name(),CREATOR.name())
                                        .anyRequest().authenticated()
                )
                .formLogin(Customizer.withDefaults())

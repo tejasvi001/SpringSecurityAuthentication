@@ -20,7 +20,7 @@ public class SessionService {
         List<Session> sessions=sessionRepository.findByUser(user);
         if(sessions.size()==SESSION_LIMIT) {
             sessions.sort(Comparator.comparing(Session::getLastUsedAt));
-            Session leastRecentlyUsedSession = sessions.getFirst();
+            Session leastRecentlyUsedSession = sessions.get(0);
             sessionRepository.delete(leastRecentlyUsedSession);
         }
         //create a new session

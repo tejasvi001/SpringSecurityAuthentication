@@ -17,6 +17,7 @@ import java.util.Set;
 public class JWTService {
     @Value("${jwt.secretKey}")
     private String jwtSecretKey;
+
     private SecretKey getSecretKey(){
         return Keys.hmacShaKeyFor(jwtSecretKey.getBytes(StandardCharsets.UTF_8));
     }
@@ -24,7 +25,7 @@ public class JWTService {
         return Jwts.builder()
                 .subject(user.getId().toString())
                 .claim("email",user.getEmail())
-                .claim("roles", Set.of("ADMIN,USER"))
+                .claim("roles",user.getRoles().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+1000*60*15))
                 .signWith(getSecretKey())

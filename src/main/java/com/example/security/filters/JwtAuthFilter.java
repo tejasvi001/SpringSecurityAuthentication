@@ -46,7 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 try {
                     User user = userService.getUserById(userId);
                     UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(user, null, null);
+                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } catch (ResourceNotFoundException e) {
