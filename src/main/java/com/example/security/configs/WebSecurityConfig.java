@@ -1,5 +1,6 @@
 package com.example.security.configs;
 
+import com.example.security.entities.enums.Permission;
 import com.example.security.entities.enums.Role;
 import com.example.security.filters.JwtAuthFilter;
 import com.example.security.handlers.OAuth2SuccessHandler;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,11 +28,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
+import static com.example.security.entities.enums.Permission.POST_CREATE;
+import static com.example.security.entities.enums.Permission.POST_VIEW;
 import static com.example.security.entities.enums.Role.ADMIN;
 import static com.example.security.entities.enums.Role.CREATOR;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig implements WebMvcConfigurer {
     private final JwtAuthFilter jwtAuthFilter;
     private final OAuth2SuccessHandler auth2SuccessHandler;
@@ -52,7 +57,12 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                                auth
                                        .requestMatchers(publicRoutes).permitAll()
                                        .requestMatchers(HttpMethod.GET,"/posts/**").permitAll()
-                                       .requestMatchers(HttpMethod.PUT,"/posts/**").hasAnyRole(ADMIN.name(),CREATOR.name())
+                                       .requestMatchers(HttpMethod.POST,"/posts/**")
+                                            .hasAnyRole(ADMIN.name(),CREATOR.name())
+//                                       .requestMatchers(HttpMethod.POST,"/posts/**")
+//                                            .hasAnyAuthority(POST_CREATE.name())
+//                                       .requestMatchers(HttpMethod.GET,"/posts/**")
+//                                            .hasAnyAuthority(POST_VIEW.name())
                                        .anyRequest().authenticated()
                )
                .formLogin(Customizer.withDefaults())

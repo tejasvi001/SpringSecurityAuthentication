@@ -2,6 +2,8 @@ package com.example.security.controllers;
 
 import com.example.security.dtos.PostDTO;
 import com.example.security.services.PostService;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +18,7 @@ public class PostController {
     }
 
     @GetMapping
+    @Secured("ROLE_USER")
     public List<PostDTO> getAllposts(){
         return postService.getAllPosts();
     }
@@ -24,6 +27,7 @@ public class PostController {
         return postService.createNewPost(post);
     }
     @GetMapping(path="/{id}")
+    @PreAuthorize("@postSecurity.isOwnerOfPost(#id)")
     public PostDTO getPostById(@PathVariable Long id){
         return postService.findById(id);
     }
