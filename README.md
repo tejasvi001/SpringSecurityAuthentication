@@ -131,7 +131,7 @@ This project is MIT licensed.
 
 ## 📬 Contact
 
-For support or questions, open an issue or contact the maintainer.
+For support or questions, open an issue or contact me at vermanitejasvi@gmail.com.
 
 > ⭐️ **Don’t forget to star the repo:**  
 >  all configurations and code samples according to your actual project needs.*
