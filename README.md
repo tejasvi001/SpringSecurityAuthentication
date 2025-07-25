@@ -134,4 +134,4 @@ This project is MIT licensed.
 For support or questions, open an issue or contact the maintainer.
 
 > ⭐️ **Don’t forget to star the repo:**  
-> [![GitHub Stars](https://img.shields.io/github/stars/tejasvi001/SpringSecurityAuthentication?style=socialvi001/SpringSecurityAuthentication all configurations and code samples according to your actual project needs.*
+>  all configurations and code samples according to your actual project needs.*
